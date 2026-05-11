@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -37,6 +38,9 @@ class AuthServiceTest {
     @BeforeEach
     void setUp() {
         sampleUser = new AppUser("manuel@upc.edu.pe", "hashed_password", "ManuelTumi", "ciclos_6_10");
+        // ID lo asigna JPA en producción al persistir; en unit test lo seteamos
+        // por reflection para que AuthService.login() pueda generar el JWT subject.
+        ReflectionTestUtils.setField(sampleUser, "id", 1L);
     }
 
     @Test
