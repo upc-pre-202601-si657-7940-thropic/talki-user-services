@@ -19,7 +19,8 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/v1/auth/**", "/h2-console/**", "/actuator/**").permitAll()
+                .requestMatchers("/v1/auth/**", "/h2-console/**", "/actuator/**",
+                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .anyRequest().authenticated()
             )
             .headers(h -> h.frameOptions(fo -> fo.disable()));

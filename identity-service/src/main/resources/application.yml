@@ -19,3 +19,11 @@ spring:
 jwt:
   secret: ${JWT_SECRET:talki-secret-key-for-demo-purposes-only-32chars}
   expiration-ms: 86400000
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
