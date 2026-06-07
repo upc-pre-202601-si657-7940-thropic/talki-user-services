@@ -30,6 +30,9 @@ class AuthServiceTest {
     @Mock
     private JwtTokenProvider jwtTokenProvider;
 
+    @Mock
+    private com.thropic.talki.identity.application.events.UserRegisteredEventPublisher userRegisteredEventPublisher;
+
     @InjectMocks
     private AuthService authService;
 
@@ -54,6 +57,12 @@ class AuthServiceTest {
         assertThat(result.getEmail()).isEqualTo("manuel@upc.edu.pe");
         assertThat(result.getUsername()).isEqualTo("ManuelTumi");
         verify(userRepository).save(any(AppUser.class));
+        // Saga por coreografía: el registro debe publicar user.registered
+        verify(userRegisteredEventPublisher).publish(
+                org.mockito.ArgumentMatchers.argThat(e ->
+                        e.getUserId().equals(1L)
+                        && e.getEmail().equals("manuel@upc.edu.pe")
+                        && e.getAcademicSegment().equals("ciclos_6_10")));
     }
 
     @Test

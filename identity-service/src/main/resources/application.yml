@@ -15,6 +15,12 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
+    virtual-host: ${RABBITMQ_VHOST:/}
 
 jwt:
   secret: ${JWT_SECRET:talki-secret-key-for-demo-purposes-only-32chars}
