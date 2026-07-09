@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
+    /** Cuenta fija de demostración (informe AV4 / Sprint 3). */
+    private static final String DEMO_EMAIL = "alejo.demo.av4@upc.edu.pe";
+
     private final AppUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
@@ -28,6 +31,19 @@ public class AuthService {
 
     public AppUser register(String email, String rawPassword, String username, String academicSegment) {
         if (userRepository.existsByEmail(email)) {
+            // Permite re-sembrar la cuenta demo del informe sin tocar la BD a mano.
+            if (DEMO_EMAIL.equalsIgnoreCase(email)) {
+                AppUser demo = userRepository.findByEmail(email)
+                        .orElseThrow(() -> new IllegalArgumentException("User not found: " + email));
+                demo.setPasswordHash(passwordEncoder.encode(rawPassword));
+                if (username != null && !username.isBlank()) {
+                    demo.setUsername(username);
+                }
+                if (academicSegment != null && !academicSegment.isBlank()) {
+                    demo.setAcademicSegment(academicSegment);
+                }
+                return userRepository.save(demo);
+            }
             throw new IllegalArgumentException("Email already registered: " + email);
         }
         String hash = passwordEncoder.encode(rawPassword);

@@ -108,6 +108,21 @@ class AuthServiceTest {
     }
 
     @Test
+    void register_whenDemoEmailAlreadyExists_shouldResetPassword() {
+        AppUser demo = new AppUser("alejo.demo.av4@upc.edu.pe", "old_hash", "alejo_demo", "ciclos_6_10");
+        when(userRepository.existsByEmail("alejo.demo.av4@upc.edu.pe")).thenReturn(true);
+        when(userRepository.findByEmail("alejo.demo.av4@upc.edu.pe")).thenReturn(Optional.of(demo));
+        when(passwordEncoder.encode("Demo1234!")).thenReturn("new_hash");
+        when(userRepository.save(demo)).thenReturn(demo);
+
+        AppUser result = authService.register(
+                "alejo.demo.av4@upc.edu.pe", "Demo1234!", "alejo_demo", "ciclos_6_10");
+
+        assertThat(result.getPasswordHash()).isEqualTo("new_hash");
+        verify(userRegisteredEventPublisher, never()).publish(any());
+    }
+
+    @Test
     void register_whenAcademicSegmentProvided_shouldPersistIt() {
         when(userRepository.existsByEmail(any())).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("hash");
